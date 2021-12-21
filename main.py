@@ -31,6 +31,7 @@ def in_hand(positions, is_connected):
         # Add current state
         is_in_hand.append(state)
 
+    is_in_hand = np.array([[False, False, False, False] for _ in range(pos_shape[0])])
     return is_in_hand
 
 def get_connection_mat(position, is_connected):
