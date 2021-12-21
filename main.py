@@ -1,5 +1,8 @@
 import numpy as np
+import math
 
+CUBE_DIM = 400
+DIST_MARGIN = 20
 
 def in_hand(positions, is_connected):
     # Check if length are similar and if data had the right dimensions
@@ -38,6 +41,25 @@ def get_connection_mat(position, is_connected):
     # Initialize without any connection
     connection_mat = np.full((4, 4), False)
 
-    print(connection_mat)
+    if (is_connected == np.full((4, 6), False)).all():
+        return connection_mat
+
+    connected_cubes = []
+    for cube in range(4):
+        if np.sum(is_connected[cube]) != 0:
+            connected_cubes.append(cube)
+
+    for cube in connected_cubes:
+        # check is face are connected for each cube
+        for other_cube in connected_cubes:
+            if cube != other_cube:
+                if compute_distance(position[cube], position[other_cube]) < CUBE_DIM + DIST_MARGIN:
+                    connection_mat[cube][other_cube] = True
+                    connection_mat[other_cube][cube] = True
 
     return connection_mat
+
+def compute_distance(pos1, pos2):
+    dist = np.linalg.norm(pos1-pos2)
+    return dist
+
