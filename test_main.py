@@ -367,10 +367,10 @@ def test_z_sup_4_cote():
 # Censé marcher mais ça marche pas
 def test_z_augmente():
     positions = np.array([[[700, 700, 200],[700,-700,200],[-700,700,200],[-700,-700,200]],
-                        [[700, 700, 319],[700,-700,200],[-700,700,200],[-700,-700,200]]])
+                         [[700, 700, 319],[700,-700,200],[-700,700,200],[-700,-700,200]]])
     connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
                             [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
-    expected = np.array([[False,False,False,False],[True,False,False,False]])
+    expected = np.array([[False, False, False, False],[True, False, False, False]])
     # print(in_hand(positions,connections))
     assert (in_hand(positions,connections)==expected).all()
 
