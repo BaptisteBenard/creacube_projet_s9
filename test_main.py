@@ -350,6 +350,25 @@ def test_compute_dist_xyz():
     assert dist < 86.61
 
 #####################################################################
+#################### Tests on z > 4*coté ############################
+
+# In_hand is true
+def test_z_sup_4_cote():
+    #COTE cube = 400
+    positions = np.array([700, 700, 700])
+    connections = np.array([False, False, False, False, False, False])
+    assert (in_hand(positions,connections))
+
+#####################################################################
+#################### Tests on z augmente ############################
+
+# def test_z_augmente():
+#     pos_1 = np.array([700, 700, 700])
+#     pos_2 = np.array([700, 700, 800])
+#     assert (in_hand(p))
+
+
+#####################################################################
 ################ Functions to help to create test data ##############
 
 def positions_noiser(positions):
