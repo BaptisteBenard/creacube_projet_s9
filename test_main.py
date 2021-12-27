@@ -355,7 +355,7 @@ def test_compute_dist_xyz():
 # In_hand is true
 def test_z_sup_4_cote():
     #COTE cube = 400
-    positions = np.array([700, 700, 700])
+    positions = np.array([700, 700, 2000])
     connections = np.array([False, False, False, False, False, False])
     assert (in_hand(positions,connections))
 
