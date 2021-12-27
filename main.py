@@ -17,24 +17,29 @@ def in_hand(positions, is_connected):
     
     is_in_hand = []
 
-    for i in range(len(positions)):
+    for time_step in range(len(positions)):
+        state = []
         # Initialize state
-        if i != 0:
+        if time_step != 0:
             state = is_in_hand[-1]
         else :
             state = [False, False, False, False]
         
         # Connection matrix
-        connections_mat = get_connection_mat(positions[i], is_connected[i])
+        connections_mat = get_connection_mat(positions[time_step], is_connected[time_step])
 
         # Apply rules
+        # Rule 1: Cube is higher than 4 cubes
+        for cube in range(4):
+            if positions[time_step][cube][2] > 3.5 * CUBE_DIM + DIST_MARGIN:
+                state[cube] = True
 
         # Propagate decision
 
         # Add current state
         is_in_hand.append(state)
 
-    is_in_hand = np.array([[False, False, False, False] for _ in range(pos_shape[0])])
+    is_in_hand = np.array(is_in_hand)
     return is_in_hand
 
 def get_connection_mat(position, is_connected):
