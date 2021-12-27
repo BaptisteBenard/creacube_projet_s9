@@ -25,16 +25,28 @@ def in_hand(positions, is_connected):
         else :
             state = [False, False, False, False]
         
-        # Connection matrix
-        connections_mat = get_connection_mat(positions[time_step], is_connected[time_step])
+            # Connection matrix
+            connections_mat = get_connection_mat(positions[time_step], is_connected[time_step])
 
-        # Apply rules
-        # Rule 1: Cube is higher than 4 cubes
-        for cube in range(4):
-            if positions[time_step][cube][2] > 3.5 * CUBE_DIM + DIST_MARGIN:
-                state[cube] = True
+            # Apply rules
+            # Rule 1: Cube is higher than 4 cubes
+            for cube in range(4):
+                if positions[time_step][cube][2] > 3.5 * CUBE_DIM + DIST_MARGIN:
+                    state[cube] = True
+            
+            # Rule 3: Altitude nulle et immobile (distance = 0, même position)
+            for cube in range(4):
+                if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-1][cube],positions[time_step][cube])==0):
+                    state[cube] = False
+            
+            # Rule 4 : Altitude nulle et vitesse constante 
+            if time_step > 1:
+                for cube in range(4):
+                    if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-2][cube],positions[time_step-1][cube])==compute_distance(positions[time_step-1][cube],positions[time_step][cube])):
+                        state[cube] = False
 
         # Propagate decision
+        
 
         # Add current state
         is_in_hand.append(state)
