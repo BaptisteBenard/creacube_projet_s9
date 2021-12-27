@@ -355,9 +355,10 @@ def test_compute_dist_xyz():
 # In_hand is true
 def test_z_sup_4_cote():
     #COTE cube = 400
-    positions = np.array([700, 700, 2000])
-    connections = np.array([False, False, False, False, False, False])
-    assert (in_hand(positions,connections))
+    positions = np.array([[[700, 700, 2000], [700, -700, 2000], [-700, 700, 2000], [-700, -700, 2000]]])
+    connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
+    expected = np.array([[True, True, True, True]])
+    assert (in_hand(positions,connections) == expected).all()
 
 #####################################################################
 #################### Tests on z augmente ############################
