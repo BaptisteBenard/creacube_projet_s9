@@ -26,30 +26,30 @@ def in_hand(positions, is_connected):
         else :
             state = [False, False, False, False]
         
-            # Connection matrix
-            connections_mat = get_connection_mat(positions[time_step], is_connected[time_step])
+        # Connection matrix
+        connections_mat = get_connection_mat(positions[time_step], is_connected[time_step])
 
-            # Apply rules
-            # Apply rules
+        # Apply rules
+        # Rule 1: Cube is higher than 4 cubes
+        for cube in range(4):
+            if positions[time_step][cube][2] > 3.5 * CUBE_DIM + DIST_MARGIN:
+                state[cube] = True
+
+        # Rule 2: Cube is moving upward
+        for cube in range(4):
+            if time_step != 0 and positions[time_step][cube][2] - positions[time_step - 1][cube][2] > 2*DIST_MARGIN:
+                state[cube] = True
+        
+        # Rule 3: Cube on mat and not moving
+        for cube in range(4):
+            if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-1][cube],positions[time_step][cube])==0):
+                state[cube] = False
+        
+        # Rule 4 : z constant and speed is constant
+        if time_step > 1:
             for cube in range(4):
-                # Rule 1: Cube is higher than 4 cubes
-                if positions[time_step][cube][2] > 3.5 * CUBE_DIM + DIST_MARGIN:
-                    state[cube] = True
-            for cube in range(4):
-                # Rule 2: Cube is moving upward
-                if time_step != 0 and positions[time_step][cube][2] - positions[time_step - 1][cube][2] > 2*DIST_MARGIN:
-                    state[cube] = True
-            
-            # Rule 3: Altitude nulle et immobile (distance = 0, même position)
-            for cube in range(4):
-                if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-1][cube],positions[time_step][cube])==0):
+                if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-2][cube],positions[time_step-1][cube])==compute_distance(positions[time_step-1][cube],positions[time_step][cube])):
                     state[cube] = False
-            
-            # Rule 4 : Altitude nulle et vitesse constante 
-            if time_step > 1:
-                for cube in range(4):
-                    if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-2][cube],positions[time_step-1][cube])==compute_distance(positions[time_step-1][cube],positions[time_step][cube])):
-                        state[cube] = False
 
         # Propagate decision
 
