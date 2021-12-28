@@ -1,5 +1,6 @@
 import numpy as np
 import math
+import copy
 
 CUBE_DIM = 400
 DIST_MARGIN = 20
@@ -21,13 +22,14 @@ def in_hand(positions, is_connected):
         state = []
         # Initialize state
         if time_step != 0:
-            state = is_in_hand[-1]
+            state = copy.deepcopy(is_in_hand[-1])
         else :
             state = [False, False, False, False]
         
             # Connection matrix
             connections_mat = get_connection_mat(positions[time_step], is_connected[time_step])
 
+<<<<<<< HEAD
             # Apply rules
             # Rule 1: Cube is higher than 4 cubes
             for cube in range(4):
@@ -44,6 +46,17 @@ def in_hand(positions, is_connected):
                 for cube in range(4):
                     if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-2][cube],positions[time_step-1][cube])==compute_distance(positions[time_step-1][cube],positions[time_step][cube])):
                         state[cube] = False
+=======
+        # Apply rules
+        for cube in range(4):
+            # Rule 1: Cube is higher than 4 cubes
+            if positions[time_step][cube][2] > 3.5 * CUBE_DIM + DIST_MARGIN:
+                state[cube] = True
+>>>>>>> 009ce4fce317d2d71b257e6c94008d2c8ae51adc
+
+            # Rule 2: Cube is moving upward
+            if time_step != 0 and positions[time_step][cube][2] - positions[time_step - 1][cube][2] > 2*DIST_MARGIN:
+                state[cube] = True
 
         # Propagate decision
         
