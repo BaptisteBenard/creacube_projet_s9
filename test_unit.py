@@ -1,6 +1,6 @@
 import numpy as np
-from numpy.lib.function_base import disp
 from main import in_hand, get_connection_mat, compute_distance
+from utils import positions_noiser
 
 #####################################################################
 ################ Tests on data dimensions ###########################
@@ -373,14 +373,3 @@ def test_z_augmente():
     expected = np.array([[False, False, False, False],[True, False, False, False]])
     # print(in_hand(positions,connections))
     assert (in_hand(positions,connections)==expected).all()
-
-
-#####################################################################
-################ Functions to help to create test data ##############
-
-def positions_noiser(positions):
-    for time_stamp in positions:
-        for cube in time_stamp:
-            cube = cube + np.random.normal(0, 5, 3)
-    print(positions)
-    return positions
