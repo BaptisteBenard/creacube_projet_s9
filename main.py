@@ -41,14 +41,15 @@ def in_hand(positions, is_connected):
                 state[cube] = True
         
         # Rule 3: Cube on mat and not moving
-        for cube in range(4):
-            if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-1][cube],positions[time_step][cube])==0):
-                state[cube] = False
+        if time_step > 0:
+            for cube in range(4):
+                if (positions[time_step][cube][2] == 0) and not is_moving(positions[time_step-1][cube],positions[time_step][cube]):
+                    state[cube] = False
         
-        # Rule 4 : z constant and speed is constant
+        # Rule 4 : z constant and speed is constant 
         if time_step > 1:
             for cube in range(4):
-                if (positions[time_step][cube][2] == 0) and (compute_distance(positions[time_step-2][cube],positions[time_step-1][cube])==compute_distance(positions[time_step-1][cube],positions[time_step][cube])):
+                if (positions[time_step][cube][2] == 0) and not is_moving_constantly(positions[time_step-2][cube],positions[time_step-1][cube],positions[time_step][cube]):
                     state[cube] = False
 
         # Propagate decision
@@ -86,3 +87,21 @@ def compute_distance(pos1, pos2):
     dist = np.linalg.norm(pos1-pos2)
     return dist
 
+# true if the cube is moving between pos1 and pos2
+# pos1 and pos2 are np.array : [x,y,z]
+def is_moving(pos1,pos2):
+    for i in range(3):
+        if (pos1[i]-pos2[i])!=0 :
+            return True
+    return False
+
+def is_moving_constantly(pos1,pos2,pos3):
+    # we first check that the cube is moving between pos1 and pos3
+    if is_moving(pos1,pos3):
+        for i in range(3):
+            #if the difference between pos1 and pos2 according to the coordinate x is not the same compared to the difference between pos2 and pos3 according to the coordinate x, 
+#the cube cannot have a constant speed. 
+            if (abs(pos1[i]-pos2[i]))!=abs(pos2[i]-pos3[i]):
+                return False
+        return True
+    return False
