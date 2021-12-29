@@ -43,17 +43,18 @@ def in_hand(positions, is_connected):
         # Rule 3: Cube on mat and not moving
         if time_step > 0:
             for cube in range(4):
-                if (positions[time_step][cube][2] == 0) and not is_moving(positions[time_step-1][cube],positions[time_step][cube]):
+                if on_ground(positions[time_step][cube]) and not is_moving(positions[time_step-1][cube],positions[time_step][cube]):
                     state[cube] = False
         
         # Rule 4 : z constant and speed is constant 
         if time_step > 1:
             for cube in range(4):
-                if (positions[time_step][cube][2] == 0) and not is_moving_constantly(positions[time_step-2][cube],positions[time_step-1][cube],positions[time_step][cube]):
+                if z_constant(positions[time_step-2][cube],positions[time_step-1][cube],positions[time_step][cube]) and \
+                   is_moving_constantly(positions[time_step-2][cube],positions[time_step-1][cube],positions[time_step][cube]):
                     state[cube] = False
 
         # Propagate decision
-
+        state = propagate(state, connections_mat)
 
         # Add current state
         is_in_hand.append(state)
@@ -91,17 +92,36 @@ def compute_distance(pos1, pos2):
 # pos1 and pos2 are np.array : [x,y,z]
 def is_moving(pos1,pos2):
     for i in range(3):
-        if (pos1[i]-pos2[i])!=0 :
+        if abs(pos1[i]-pos2[i]) > 2 * DIST_MARGIN:
             return True
     return False
 
-def is_moving_constantly(pos1,pos2,pos3):
+def is_moving_constantly(pos1, pos2, pos3):
     # we first check that the cube is moving between pos1 and pos3
     if is_moving(pos1,pos3):
         for i in range(3):
             #if the difference between pos1 and pos2 according to the coordinate x is not the same compared to the difference between pos2 and pos3 according to the coordinate x, 
 #the cube cannot have a constant speed. 
-            if (abs(pos1[i]-pos2[i]))!=abs(pos2[i]-pos3[i]):
+            if abs(abs(pos1[i]-pos2[i])-abs(pos2[i]-pos3[i])) > 2 * DIST_MARGIN:
+                print(pos1, pos2, pos3, i)
                 return False
         return True
     return False
+
+def on_ground(pos):
+    return pos[2] > CUBE_DIM/2 - DIST_MARGIN and pos[2] < CUBE_DIM/2 + DIST_MARGIN
+
+def z_constant(pos1, pos2, pos3):
+    return abs(pos1[2] - pos2[2]) < 2 * DIST_MARGIN and abs(pos1[2] - pos3[2]) < 2 * DIST_MARGIN and abs(pos2[2] - pos3[2]) < 2 * DIST_MARGIN
+
+def propagate(states, connection_mat):
+    state = copy.deepcopy(states)
+    tmp = [False, False, False, False]
+    while np.sum(state != tmp) > 0:
+        tmp = copy.deepcopy(state)
+        for cube1 in range(4):
+            for cube2 in range(cube1, 3):
+                if connection_mat[cube1][cube2]:
+                    if not state[cube1] or not state[cube2]:
+                        state[cube1], state[cube2] = False, False
+    return state
