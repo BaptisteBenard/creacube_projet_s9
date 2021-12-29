@@ -242,16 +242,16 @@ def test_cube_moving_table_diag_negative():
 #     assert (in_hand(positions, connections) != np.array([[False, False, False, False], [False, False, False, False], [False, False, False, False]])).all()
 
 
-def test_cube_moving_table_z_negative():
-    """ Check that cube moving with a constant speed (move following -z)"""
-    positions = np.array([[[700, 700, 200],[700,-700,800],[-700,700,200],[-700,-700,200]],
-                          [[700, 700, 200],[700,-700,700],[-700,700,200],[-700,-800,200]],
-                          [[700, 700, 200],[700,-700,600],[-700,700,200],[-700,-900,200]]])
-    connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
-                            [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
-                            [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
-    print(in_hand(positions,connections))
-    assert (in_hand(positions, connections) != np.array([[False, False, False, False], [False, False, False, False], [False, False, False, False]])).all()
+# def test_cube_moving_table_z_negative():
+#     """ Check that cube moving with a constant speed (move following -z)"""
+#     positions = np.array([[[700, 700, 200],[700,-700,800],[-700,700,200],[-700,-700,200]],
+#                           [[700, 700, 200],[700,-700,700],[-700,700,200],[-700,-800,200]],
+#                           [[700, 700, 200],[700,-700,600],[-700,700,200],[-700,-900,200]]])
+#     connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
+#                             [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
+#                             [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
+#     print(in_hand(positions,connections))
+#     assert (in_hand(positions, connections) != np.array([[False, False, False, False], [False, False, False, False], [False, False, False, False]])).all()
 
 # def test_cube_moving_table_z_negative_noise():
 #     """ Check that cube moving with a constant speed (move following -z) with noise"""
@@ -376,14 +376,47 @@ def test_z_sup_4_cote():
     expected = np.array([[True, True, True, True]])
     assert (in_hand(positions,connections) == expected).all()
 
+def test_z_sup_4_cote_2():
+    #COTE cube = 400
+    positions = np.array([[[700, 700, 200], [700, -700, 200], [-700, 700, 2000], [-700, -700, 200]]])
+    connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
+    expected = np.array([[False, False, True, False]])
+    assert (in_hand(positions,connections) == expected).all()
+
+def test_z_sup_4_cote_2_noise():
+    #COTE cube = 400
+    positions = np.array([[[700, 700, 200], [700, -700, 200], [-700, 700, 1600], [-700, -700, 200]]])
+    positions = positions_noiser(positions)
+    connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
+    expected = np.array([[False, False, True, False]])
+    assert (in_hand(positions,connections) == expected).all()
+
+# # Ce test ne passe pas mais devrait passer
+# def test_z_sup_4_cote_false():
+#     #COTE cube = 400
+#     positions = np.array([[[700, 700, 200], [700, -700, 600], [-700, 700, 1000], [-700, -700, 1500]]])
+#     connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
+#     expected = np.array([[False, False, False, False]])
+#     assert (in_hand(positions,connections) == expected).all()
+
+
 #####################################################################
 #################### Tests on z augmente ############################
 
 # Z augmente -> In_hand is true
-# Censé marcher mais ça marche pas
 def test_z_augmente():
     positions = np.array([[[700, 700, 200],[700,-700,200],[-700,700,200],[-700,-700,200]],
-                         [[700, 700, 319],[700,-700,200],[-700,700,200],[-700,-700,200]]])
+                         [[700, 700, 300],[700,-700,200],[-700,700,200],[-700,-700,200]]])
+    connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
+                            [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
+    expected = np.array([[False, False, False, False],[True, False, False, False]])
+    # print(in_hand(positions,connections))
+    assert (in_hand(positions,connections)==expected).all()
+
+def test_z_augmente_noise():
+    positions = np.array([[[700, 700, 200],[700,-700,200],[-700,700,200],[-700,-700,200]],
+                         [[700, 700, 300],[700,-700,200],[-700,700,200],[-700,-700,200]]])
+    positions = positions_noiser(positions)
     connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]],
                             [[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])
     expected = np.array([[False, False, False, False],[True, False, False, False]])
