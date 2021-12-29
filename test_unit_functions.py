@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.lib.index_tricks import _fill_diagonal_dispatcher
 from main import get_connection_mat, compute_distance, is_moving, is_moving_constantly,\
-                 on_ground, z_constant
+                 on_ground, z_constant, propagate
 from utils import positions_noiser
 
 #####################################################################
@@ -202,3 +202,62 @@ def test_z_not_constant_noise():
     pos2 = pos2 + np.random.normal(0, 5, 3)
     pos2 = pos2 + np.random.normal(0, 5, 3)
     assert z_constant(pos1, pos2, pos3) == False
+
+#####################################################################
+############ Tests on propagate function ############################
+
+def test_propagate_all_connected():
+    conn_mat = np.array([[False, True, False, True],
+                         [True, False, True, False],
+                         [False, True, False, True],
+                         [True, False, True, False]])
+    state = [False, True, True, True]
+    assert propagate(state, conn_mat) == [False, False, False, False]
+
+def test_propagate_all_connected2():
+    conn_mat = np.array([[False, True, False, True],
+                         [True, False, True, False],
+                         [False, True, False, True],
+                         [True, False, True, False]])
+    state = [True, False, True, True]
+    assert propagate(state, conn_mat) == [False, False, False, False]
+
+def test_propagate_all_connected():
+    conn_mat = np.array([[False, True, False, True],
+                         [True, False, True, False],
+                         [False, True, False, True],
+                         [True, False, True, False]])
+    state = [False, True, True, True]
+    assert propagate(state, conn_mat) == [False, False, False, False]
+
+def test_propagate_1_block():
+    conn_mat = np.array([[False, False, False, False],
+                         [False, False, False, True],
+                         [False, False, False, False],
+                         [False, True, False, False]])
+    state = [True, False, True, True]
+    assert propagate(state, conn_mat) == [True, False, True, False]
+
+def test_propagate_1_block2():
+    conn_mat = np.array([[False, False, False, False],
+                         [False, False, False, True],
+                         [False, False, False, False],
+                         [False, True, False, False]])
+    state = [True, True, True, True]
+    assert propagate(state, conn_mat) == [True, True, True, True]
+
+def test_propagate_no_connection():
+    conn_mat = np.array([[False, False, False, False],
+                         [False, False, False, False],
+                         [False, False, False, False],
+                         [False, False, False, False]])
+    state = [True, False, False, True]
+    assert propagate(state, conn_mat) == [True, False, False, True]
+
+def test_propagate_no_connection2():
+    conn_mat = np.array([[False, False, False, False],
+                         [False, False, False, False],
+                         [False, False, False, False],
+                         [False, False, False, False]])
+    state = [True, False, True, False]
+    assert propagate(state, conn_mat) == [True, False, True, False]

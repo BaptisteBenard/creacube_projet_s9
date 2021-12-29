@@ -120,7 +120,7 @@ def propagate(states, connection_mat):
     while np.sum(state != tmp) > 0:
         tmp = copy.deepcopy(state)
         for cube1 in range(4):
-            for cube2 in range(cube1, 3):
+            for cube2 in range(cube1, 4):
                 if connection_mat[cube1][cube2]:
                     if not state[cube1] or not state[cube2]:
                         state[cube1], state[cube2] = False, False
