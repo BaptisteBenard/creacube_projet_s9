@@ -154,21 +154,40 @@ def test_is_not_moving_constantly():
 
 def test_on_groud():
     pos = np.array([700,700,200])
-    assert on_ground(pos) == True
+    assert on_ground(pos,2) == True
 
 def test_on_groud_noise():
     pos = np.array([700,700,200],dtype=float)
     pos = pos + np.random.normal(0, 5, 3)
-    assert on_ground(pos) == True
+    assert on_ground(pos,2) == True
 
 def test_not_on_groud():
     pos = np.array([700,700,250])
-    assert on_ground(pos) == False
+    assert on_ground(pos,2) == False
 
 def test_not_on_groud_noise():
     pos = np.array([700,700,250],dtype=float)
     pos = pos + np.random.normal(0, 5, 3)
-    assert on_ground(pos) == False
+    assert on_ground(pos,2) == False
+
+def test_on_groud_wheel():
+    pos = np.array([700,700,250])
+    assert on_ground(pos,3) == True
+
+def test_on_groud_wheel_noise():
+    pos = np.array([700,700,250],dtype=float)
+    pos = pos + np.random.normal(0, 5, 3)
+    assert on_ground(pos,3) == True
+
+def test_not_on_groud_wheel():
+    pos = np.array([700,700,300])
+    assert on_ground(pos,3) == False
+
+def test_not_on_groud_wheel_noise():
+    pos = np.array([700,700,300],dtype=float)
+    pos = pos + np.random.normal(0, 5, 3)
+    assert on_ground(pos,3) == False
+
 
 #####################################################################
 ############ Tests on z_constant function ###########################

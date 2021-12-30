@@ -4,6 +4,7 @@ import copy
 
 CUBE_DIM = 400
 DIST_MARGIN = 20
+WHEEL_DIM = 50
 
 def in_hand(positions, is_connected):
     # Check if length are similar and if data had the right dimensions
@@ -43,7 +44,7 @@ def in_hand(positions, is_connected):
         # Rule 3: Cube on mat and not moving
         if time_step > 0:
             for cube in range(4):
-                if on_ground(positions[time_step][cube]) and not is_moving(positions[time_step-1][cube],positions[time_step][cube]):
+                if on_ground(positions[time_step][cube], cube) and not is_moving(positions[time_step-1][cube],positions[time_step][cube]):
                     state[cube] = False
         
         # Rule 4 : z constant and speed is constant 
@@ -52,6 +53,7 @@ def in_hand(positions, is_connected):
                 if z_constant(positions[time_step-2][cube],positions[time_step-1][cube],positions[time_step][cube]) and \
                    is_moving_constantly(positions[time_step-2][cube],positions[time_step-1][cube],positions[time_step][cube]):
                     state[cube] = False
+                    is_in_hand[-1][cube] = False
 
         # Propagate decision
         state = propagate(state, connections_mat)
@@ -108,8 +110,11 @@ def is_moving_constantly(pos1, pos2, pos3):
         return True
     return False
 
-def on_ground(pos):
-    return pos[2] > CUBE_DIM/2 - DIST_MARGIN and pos[2] < CUBE_DIM/2 + DIST_MARGIN
+def on_ground(pos, cube):
+    if cube != 3:
+        return pos[2] > CUBE_DIM/2 - DIST_MARGIN and pos[2] < CUBE_DIM/2 + DIST_MARGIN
+    return pos[2] > CUBE_DIM/2 + WHEEL_DIM - DIST_MARGIN and pos[2] < CUBE_DIM/2 + WHEEL_DIM + DIST_MARGIN or \
+        pos[2] > CUBE_DIM/2 - DIST_MARGIN and pos[2] < CUBE_DIM/2 + DIST_MARGIN
 
 def z_constant(pos1, pos2, pos3):
     return abs(pos1[2] - pos2[2]) < 2 * DIST_MARGIN and abs(pos1[2] - pos3[2]) < 2 * DIST_MARGIN and abs(pos2[2] - pos3[2]) < 2 * DIST_MARGIN
