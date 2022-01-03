@@ -7,6 +7,13 @@ DIST_MARGIN = 20
 WHEEL_DIM = 50
 
 def in_hand(positions, is_connected):
+    """
+    Compute for each sample for each cube whether it is connected or not.
+    Return a (nb_samples, 4) list of boolean, True=Cube was in hand for this sample
+    :positions: (nb_samples, 4, 3) numpy array that contains positions of the 4 cubes (x, y, z) coordinates for each sample
+    :is_connected: (nb_samples, 4, 6) boolean numpy array that contains if a face is connected to another for each face of each cube (Top, North, East, West, South, Bottom) 
+    for each sample
+    """
     # Check if length are similar and if data had the right dimensions
     pos_shape = positions.shape
     conn_shape = is_connected.shape
@@ -65,6 +72,11 @@ def in_hand(positions, is_connected):
     return is_in_hand
 
 def get_connection_mat(position, is_connected):
+    """ 
+    Compute a connection matrix.
+    :position: (4, 3) numpy array that contains positions of the 4 cubes (x, y, z) coordinates
+    :is_connected: (4, 6) boolean numpy array that contains if a face is connected to another for each face of each cube (Top, North, East, West, South, Bottom)
+    """
     # Initialize without any connection
     connection_mat = np.full((4, 4), False)
 
@@ -87,23 +99,41 @@ def get_connection_mat(position, is_connected):
     return connection_mat
 
 def compute_distance(pos1, pos2):
+    """
+    Compute distance between pos1 and pos2.
+    :pos1: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :pos2: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    """
     dist = np.linalg.norm(pos1-pos2)
     return dist
 
-# true if the cube is moving between pos1 and pos2
+# True if the cube is moving between pos1 and pos2
 # pos1 and pos2 are np.array : [x,y,z]
 def is_moving(pos1,pos2):
+    """
+    Determine if a cube is moving or not.
+    Return True if the cube is moving.
+    :pos1: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :pos2: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    """
     for i in range(3):
         if abs(pos1[i]-pos2[i]) > 2 * DIST_MARGIN:
             return True
     return False
 
 def is_moving_constantly(pos1, pos2, pos3):
-    # we first check that the cube is moving between pos1 and pos3
+    """
+    Determine if a cube is moving constantly or not.
+    Return True if the cube is moving constantly.
+    :pos1: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :pos2: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :pos3: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    """
+    # We first check that the cube is moving between pos1 and pos3
     if is_moving(pos1,pos3):
         for i in range(3):
-            #if the difference between pos1 and pos2 according to the coordinate x is not the same compared to the difference between pos2 and pos3 according to the coordinate x, 
-#the cube cannot have a constant speed. 
+            # If the difference between pos1 and pos2 according to the coordinate x is not the same compared to the difference between pos2 and pos3 according to the coordinate x, 
+            # the cube cannot have a constant speed. 
             if abs(abs(pos1[i]-pos2[i])-abs(pos2[i]-pos3[i])) > 2 * DIST_MARGIN:
                 print(pos1, pos2, pos3, i)
                 return False
@@ -111,17 +141,40 @@ def is_moving_constantly(pos1, pos2, pos3):
     return False
 
 def on_ground(pos, cube):
+    """
+    Check if a cube is on the mat or not.
+    Return True if the cube is on the mat.
+    :pos: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :cube: cube id (between 0 and 3: 0=Black, 1=Blue, 2=Red, 3=White)
+    """
+    # Check if cube is on the ground
     if cube != 3:
         return pos[2] > CUBE_DIM/2 - DIST_MARGIN and pos[2] < CUBE_DIM/2 + DIST_MARGIN
+    # Check if the cube if on the ground and consider potential wheel
     return pos[2] > CUBE_DIM/2 + WHEEL_DIM - DIST_MARGIN and pos[2] < CUBE_DIM/2 + WHEEL_DIM + DIST_MARGIN or \
         pos[2] > CUBE_DIM/2 - DIST_MARGIN and pos[2] < CUBE_DIM/2 + DIST_MARGIN
 
 def z_constant(pos1, pos2, pos3):
+    """
+    Check if z is constant.
+    Return True if z is constant.
+    :pos1: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :pos2: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    :pos3: (3, ) numpy array that contains position of a cube (x, y, z) coordinates
+    """
     return abs(pos1[2] - pos2[2]) < 2 * DIST_MARGIN and abs(pos1[2] - pos3[2]) < 2 * DIST_MARGIN and abs(pos2[2] - pos3[2]) < 2 * DIST_MARGIN
 
 def propagate(states, connection_mat):
+    """
+    Propagate states values using connection in connection_mat.
+    Return updated version of states.
+    :states: (4, ) list containing states of the 4 cubes.
+    :connection_mat: connection matrix of the 4 cubes.
+    """
+    # Propagate state to cube connected
     state = copy.deepcopy(states)
     tmp = [False, False, False, False]
+    # Propagate while state is not stable
     while np.sum(state != tmp) > 0:
         tmp = copy.deepcopy(state)
         for cube1 in range(4):
