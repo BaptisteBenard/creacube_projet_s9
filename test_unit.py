@@ -294,7 +294,6 @@ def test_z_sup_4_cote_2_noise():
     expected = np.array([[False, False, True, False]])
     assert (in_hand(positions,connections) == expected).all()
 
-# Ce test ne passe pas mais devrait passer
 def test_z_sup_4_cote_false():
     positions = np.array([[[700, 700, 200], [700, -700, 600], [-700, 700, 1000], [-700, -700, 1400]]])
     connections = np.array([[[False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False], [False, False, False, False, False, False]]])

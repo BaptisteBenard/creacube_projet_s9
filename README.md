@@ -45,3 +45,9 @@ The "propagation" phase consist of the modification of state of cube connected t
 For example, if two cube are connected and one of these cube is considered "not in hand" after the propagation phase, both are considerer "not in hand".
 
 Another issue of the algorithm is if the user connected a cube to a cube structure "not in hand" and then deconnected it. This cube is considered "not in hand" for the samples of connection even if the user had it in hand. The main problem is that the data provided do not bring enough data to determine if the user hold the cube or not during the connection time.
+
+## Tests to add
+Our work is incomplete. Adding more complexe tests could be important to improve code reliability.
+Here is some examples of relevant tests:
+* A cube structure falls and/or splits in many parts.
+* A cube structure turns on itself due to imbalance (for example).
